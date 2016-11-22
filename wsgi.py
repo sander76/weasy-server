@@ -71,13 +71,14 @@ def generate_from_url():
     app.logger.info(' ==> POST  /pdf?filename=%s  ok' % name)
     return response
 
-@app.route('/url',methods=['GET'])
+
+@app.route('/url', methods=['GET'])
 def get_from_url():
     url = request.args.get('url')
     if url is not None:
-        html=HTML(url)
-        pdf=html.write_pdf()
-        return send_file(pdf,mimetype='pdf')
+        html = HTML(url)
+        pdf = html.write_pdf()
+        return send_file(pdf, mimetype='pdf')
 
 
 @app.route('/multiple', methods=['POST'])
@@ -94,6 +95,5 @@ def multiple():
     return response
 
 
-
 if __name__ == '__main__':
-    app.run()
+    app.run(port=5001)
