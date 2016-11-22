@@ -3,6 +3,7 @@
 import json
 import logging
 
+import StringIO
 from flask import Flask, request, make_response
 from flask.helpers import send_file
 from weasyprint import HTML
@@ -77,8 +78,11 @@ def get_from_url():
     url = request.args.get('url')
     if url is not None:
         html = HTML(url)
-        pdf = html.write_pdf()
-        return send_file(pdf, mimetype='pdf')
+        img_io = StringIO()
+        pdf = html.write_pdf(img_io)
+        img_io.seek(0)
+
+        return send_file(img_io, mimetype='pdf')
 
 
 @app.route('/multiple', methods=['POST'])
