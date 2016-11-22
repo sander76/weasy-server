@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-
+import StringIO
 import json
 import logging
 
-import StringIO
+
+
 from flask import Flask, request, make_response
 from flask.helpers import send_file
 from weasyprint import HTML
@@ -78,7 +79,7 @@ def get_from_url():
     url = request.args.get('url')
     if url is not None:
         html = HTML(url)
-        img_io = StringIO()
+        img_io = StringIO.StringIO()
         pdf = html.write_pdf(img_io)
         img_io.seek(0)
 
