@@ -80,10 +80,10 @@ def get_from_url():
     if url is not None:
         html = HTML(url)
         img_io = StringIO.StringIO()
-        pdf = html.write_pdf(img_io)
+        html.write_pdf(img_io)
         img_io.seek(0)
 
-        return send_file(img_io, mimetype='pdf')
+        return send_file(img_io, mimetype='application/octet-stream')
 
 
 @app.route('/multiple', methods=['POST'])
