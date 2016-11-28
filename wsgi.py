@@ -51,6 +51,7 @@ def home():
 @app.route('/url', methods=['GET'])
 def get_from_url():
     url = request.args.get('url')
+    lgr.debug("url: {}".format(url))
     if url is not None:
         try:
             html = HTML(url)
