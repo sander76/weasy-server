@@ -8,6 +8,9 @@ from flask import Flask, request
 from flask.helpers import send_file
 from weasyprint import HTML
 from werkzeug.exceptions import abort
+
+from logger.mylogger import setup_logging
+
 lgr = logging.getLogger(__name__)
 app = Flask('pdf')
 
@@ -50,7 +53,7 @@ def home():
 
 @app.route('/url', methods=['GET'])
 def get_from_url():
-    url = request.args.get('url').decode('utf-8')
+    url = request.args.get('url')
     lgr.debug("url: {}".format(url))
     if url is not None:
         try:
@@ -79,4 +82,7 @@ def get_from_url():
 
 
 if __name__ == '__main__':
+    setup_logging("logger/log_config.json")
+    lgr = logging.getLogger(__name__)
+    lgr.debug("starting.....")
     app.run(port=5001, host="0.0.0.0")
