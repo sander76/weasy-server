@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 import StringIO
-import json
 import logging
 
-from flask import Flask, request, make_response
+from flask import Flask, request
 from flask.helpers import send_file
 from weasyprint import HTML
-
+from werkzeug.exceptions import abort
+lgr = logging.getLogger(__name__)
 app = Flask('pdf')
 
 
@@ -46,59 +46,32 @@ def home():
     '''
 
 
-@app.route('/pdf', methods=['POST'])
-def generate():
-    name = request.args.get('filename', 'unnamed.pdf')
-    app.logger.info('POST  /pdf?filename=%s' % name)
-    html = HTML(string=request.data)
-    pdf = html.write_pdf()
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'inline;filename=%s' % name
-    app.logger.info(' ==> POST  /pdf?filename=%s  ok' % name)
-    return response
-
-
-@app.route('/url', methods=['POST'])
-def generate_from_url():
-    name = request.args.get('filename', 'unnamed.pdf')
-    app.logger.info('POST  /pdf?filename=%s' % name)
-    html = HTML(request.data.decode('utf-8'))
-    pdf = html.write_pdf()
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'inline;filename=%s' % name
-    app.logger.info(' ==> POST  /pdf?filename=%s  ok' % name)
-    return response
-
-
 @app.route('/url', methods=['GET'])
 def get_from_url():
     url = request.args.get('url')
     if url is not None:
-        html = HTML(url)
+        try:
+            html = HTML(url)
+        except Exception as e:
+            abort(404)
+            lgr.error("Unable getting html from: {}".format(url))
         img_io = StringIO.StringIO()
-        html.write_pdf(img_io)
+        try:
+            html.write_pdf(img_io)
+        except MemoryError as e:
+            lgr.error("Unable to create pdf from: {}".format(url))
+            abort(404)
+        except Exception as e:
+            lgr.error("Unable to create pdf from: {}".format(url))
+            lgr.error(e)
+            abort(404)
+
         img_io.seek(0)
 
         return send_file(img_io,
                          mimetype='pdf',
                          as_attachment=True,
-                         attachment_filename="test.pdf")
-
-
-@app.route('/multiple', methods=['POST'])
-def multiple():
-    name = request.args.get('filename', 'unnamed.pdf')
-    app.logger.info('POST  /multiple?filename=%s' % name)
-    htmls = json.loads(request.data.decode('utf-8'))
-    documents = [HTML(string=html).render() for html in htmls]
-    pdf = documents[0].copy([page for doc in documents for page in doc.pages]).write_pdf()
-    response = make_response(pdf)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = 'inline;filename=%s' % name
-    app.logger.info(' ==> POST  /multiple?filename=%s  ok' % name)
-    return response
+                         attachment_filename="generated_pdf.pdf")
 
 
 if __name__ == '__main__':

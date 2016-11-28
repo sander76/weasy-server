@@ -4,7 +4,8 @@ import json
 import re
 import subprocess
 import unittest
-from urllib.request import Request, urlopen
+#from urllib.request import Request, urlopen
+from urllib2 import Request, urlopen
 
 html_data = '''
 <!DOCTYPE html>
@@ -97,7 +98,7 @@ class TestMultiple(unittest.TestCase):
 
     def test_body(self):
         data = self.response.read()
-        pages = re.findall(rb'<<\s+/Type\s+/Page\b', data, re.MULTILINE | re.DOTALL)
+        pages = re.findall('<<\s+/Type\s+/Page\b', data, re.MULTILINE | re.DOTALL)
         self.assertEqual(len(pages), 2)
 
 
