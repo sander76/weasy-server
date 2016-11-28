@@ -1,6 +1,8 @@
 #!/usr/bin/env python
-import StringIO
+#import StringIO
+import io
 import logging
+
 
 from flask import Flask, request
 from flask.helpers import send_file
@@ -55,7 +57,8 @@ def get_from_url():
         except Exception as e:
             abort(404)
             lgr.error("Unable getting html from: {}".format(url))
-        img_io = StringIO.StringIO()
+        #img_io = StringIO() #2.7
+        img_io=io.BytesIO()  #3.5
         try:
             html.write_pdf(img_io)
         except MemoryError as e:
