@@ -50,7 +50,7 @@ def home():
 
 @app.route('/url', methods=['GET'])
 def get_from_url():
-    url = request.args.get('url')
+    url = request.args.get('url').decode('utf-8')
     lgr.debug("url: {}".format(url))
     if url is not None:
         try:
