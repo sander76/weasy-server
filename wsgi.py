@@ -1,9 +1,7 @@
 #!/usr/bin/env python
-#import StringIO
+
 import io
 import logging
-
-
 from flask import Flask, request
 from flask.helpers import send_file
 from weasyprint import HTML
