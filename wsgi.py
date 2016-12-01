@@ -42,14 +42,14 @@ def get_from_url():
         try:
             html = HTML(url)
         except Exception as e:
-            lgr.exception()
+            lgr.exception("Problem getting url: {}".format(url))
             abort(404)
         #img_io = StringIO() #2.7
         img_io=io.BytesIO()  #3.5
         try:
             html.write_pdf(img_io)
         except Exception as e:
-            lgr.exception()
+            lgr.exception("Problem creating pdf from: {}".format(url))
             img_io.close()
             abort(404)
         else:
