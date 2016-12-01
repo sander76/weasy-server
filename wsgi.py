@@ -57,13 +57,16 @@ def get_from_url():
             # lgr.error(e)
 
             abort(404)
+        else:
+            img_io.seek(0)
 
-        img_io.seek(0)
-
-        return send_file(img_io,
-                         mimetype='pdf',
-                         as_attachment=True,
-                         attachment_filename="generated_pdf.pdf")
+            return send_file(img_io,
+                             mimetype='pdf',
+                             as_attachment=True,
+                             attachment_filename="generated_pdf.pdf")
+        finally:
+            lgr.debug("closing file stream")
+            img_io.close()
 
 
 if __name__ == '__main__':
