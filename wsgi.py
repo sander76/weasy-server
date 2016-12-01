@@ -48,14 +48,9 @@ def get_from_url():
         img_io=io.BytesIO()  #3.5
         try:
             html.write_pdf(img_io)
-        except MemoryError as e:
-            lgr.error("Unable to create pdf from: {}".format(url))
-            abort(404)
         except Exception as e:
             lgr.exception()
-            # lgr.error("Unable to create pdf from: {}".format(url))
-            # lgr.error(e)
-
+            img_io.close()
             abort(404)
         else:
             img_io.seek(0)
@@ -64,9 +59,7 @@ def get_from_url():
                              mimetype='pdf',
                              as_attachment=True,
                              attachment_filename="generated_pdf.pdf")
-        finally:
-            lgr.debug("closing file stream")
-            img_io.close()
+
 
 
 if __name__ == '__main__':
