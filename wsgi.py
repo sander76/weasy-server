@@ -42,8 +42,8 @@ def get_from_url():
         try:
             html = HTML(url)
         except Exception as e:
+            lgr.exception()
             abort(404)
-            lgr.error("Unable getting html from: {}".format(url))
         #img_io = StringIO() #2.7
         img_io=io.BytesIO()  #3.5
         try:
@@ -52,8 +52,10 @@ def get_from_url():
             lgr.error("Unable to create pdf from: {}".format(url))
             abort(404)
         except Exception as e:
-            lgr.error("Unable to create pdf from: {}".format(url))
-            lgr.error(e)
+            lgr.exception()
+            # lgr.error("Unable to create pdf from: {}".format(url))
+            # lgr.error(e)
+
             abort(404)
 
         img_io.seek(0)
