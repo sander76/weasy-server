@@ -11,3 +11,4 @@ for lp in range(0, 300):
         HTML(URL).write_pdf(OUT)
     except OSError as e:
         logging.exception("**************** ERROR AT ATTEMPT: {} *******************".format(lp))
+        break
